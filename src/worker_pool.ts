@@ -15,21 +15,24 @@ export class WorkerPool extends stream.Duplex {
 
     public messageQueue: Array<CallMessage | ResultMessage> = [];
     public workers: Array<threads.Worker> = [];
-    public [$ready]: Promise<Array<null>>;
+    public [$ready]: Promise<Array<threads.Worker>>;
 
     constructor(workerPoolOptions: WorkerPoolOptions, workerOptions?: threads.WorkerOptions, duplexOptions?: stream.DuplexOptions) {
         super({ ...duplexOptions, ...{ objectMode: true } });
 
-        const workers: Array<Promise<null>> = [];
+        const workers: Array<Promise<threads.Worker>> = [];
         for (let i = 0; i < workerPoolOptions.workerCount; i++) {
-            workers.push(new Promise<null>((r, e) => {
+            workers.push(new Promise<threads.Worker>((r, e) => {
                 const worker = new threads.Worker(workerPoolOptions.workerURL, workerOptions);
                 worker.on('message', (message: CallMessage | ResultMessage) => {
                     this.messageQueue.push(message);
                     this.emit($data);
                 });
-                worker.on('error', e);
-                worker.on('online', r);
+                worker.once('error', e);
+                worker.once('online', ()=>{
+                    worker.removeListener('error', e);
+                    r(worker);
+                });
                 this.workers.push(worker);
             }));
         }
