@@ -1,6 +1,6 @@
 import * as threads from "node:worker_threads";
 import * as stream from "node:stream";
-import { CallMessage, ResultMessage } from "network-services";
+import { createService, Service, CallMessage, ResultMessage } from "network-services";
 
 export interface WorkerPoolOptions {
     workerCount: number;
@@ -8,29 +8,39 @@ export interface WorkerPoolOptions {
     workerOptions?: threads.WorkerOptions;
 }
 
+const $data = Symbol('data');
+const $ready = Symbol('ready');
+
 export class WorkerPool extends stream.Duplex {
-    static $data = Symbol('data');
 
     public messageQueue: Array<CallMessage | ResultMessage> = [];
     public workers: Array<threads.Worker> = [];
+    public [$ready]: Promise<Array<null>>;
 
     constructor(workerPoolOptions: WorkerPoolOptions, workerOptions?: threads.WorkerOptions, duplexOptions?: stream.DuplexOptions) {
         super({ ...duplexOptions, ...{ objectMode: true } });
 
+        const workers: Array<Promise<null>> = [];
         for (let i = 0; i < workerPoolOptions.workerCount; i++) {
-            const worker = new threads.Worker(workerPoolOptions.workerURL, workerOptions);
-            worker.on('message', (message: CallMessage | ResultMessage) => {
-                this.messageQueue.push(message);
-                this.emit(WorkerPool.$data);
-            });
-            this.workers.push(worker);
+            workers.push(new Promise<null>((r, e) => {
+                const worker = new threads.Worker(workerPoolOptions.workerURL, workerOptions);
+                worker.on('message', (message: CallMessage | ResultMessage) => {
+                    this.messageQueue.push(message);
+                    this.emit($data);
+                });
+                worker.on('error', e);
+                worker.on('online', r);
+                this.workers.push(worker);
+            }));
         }
+        this[$ready] = Promise.all(workers);
     }
 
     async _write(chunk: CallMessage | ResultMessage, encoding: BufferEncoding, callback: (error?: Error | null) => void): Promise<void> {
         try {
             const worker = this.workers.shift();
             if (worker) {
+                this.workers.push(worker);
                 await new Promise<null>((r, j) => {
                     worker.once('messageerror', j);
                     worker.postMessage(chunk);
@@ -38,7 +48,6 @@ export class WorkerPool extends stream.Duplex {
                     r(null);
                 });
                 callback();
-                this.workers.push(worker);
             }
         }
         catch (err) {
@@ -51,13 +60,13 @@ export class WorkerPool extends stream.Duplex {
         if (this.messageQueue.length) {
             while (this.messageQueue.length) {
                 const message = this.messageQueue.shift();
-                if (!this.push(message)) {
+                if (!this.push(message)) { // Push the message to the Mux.
                     break;
                 }
             }
         }
         else {
-            this.once(WorkerPool.$data, () => {
+            this.once($data, () => {
                 while (this.messageQueue.length) {
                     const message = this.messageQueue.shift();
                     if (!this.push(message)) {
@@ -67,4 +76,11 @@ export class WorkerPool extends stream.Duplex {
             });
         }
     }
+}
+
+
+export async function createServicePool(workerPoolOptions: WorkerPoolOptions, workerOptions?: threads.WorkerOptions, duplexOptions?: stream.DuplexOptions): Promise<Service> {
+    const pool = new WorkerPool(workerPoolOptions, workerOptions, duplexOptions);
+    await pool[$ready];
+    return createService(pool);
 }

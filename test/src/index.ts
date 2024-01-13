@@ -1,15 +1,19 @@
-import { createService, WorkerPool } from 'scalability';
+import { createServicePool } from 'scalability';
 import { Greeter } from './service.js';
 
-const pool = new WorkerPool({
-    workerCount: 2,
+const service = await createServicePool({
+    workerCount: 1,
     workerURL: './dist/service.js'
 });
 
-const service = createService(pool);
-
 const greeter = service.createServiceAPI<Greeter>();
 
-const result = await greeter.greet('happy');
+const results = [];
+for (let i = 0; i < 10; i++) {
+    results.push(greeter.greet('happy'));
+}
 
+console.time('test');
+const result = await Promise.all(results);
 console.log(result);
+console.timeEnd('test');
