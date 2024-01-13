@@ -11,6 +11,8 @@ export interface WorkerPoolOptions {
 const $data = Symbol('data');
 const $ready = Symbol('ready');
 
+// Implement the custom IdentifierGenerator.
+
 export class WorkerPool extends stream.Duplex {
 
     public messageQueue: Array<CallMessage | ResultMessage> = [];
@@ -29,7 +31,7 @@ export class WorkerPool extends stream.Duplex {
                     this.emit($data);
                 });
                 worker.once('error', e);
-                worker.once('online', ()=>{
+                worker.once('online', () => {
                     worker.removeListener('error', e);
                     r(worker);
                 });
@@ -81,8 +83,11 @@ export class WorkerPool extends stream.Duplex {
     }
 }
 
-
-export async function createServicePool(workerPoolOptions: WorkerPoolOptions, workerOptions?: threads.WorkerOptions, duplexOptions?: stream.DuplexOptions): Promise<Service> {
+export async function createServicePool(
+    workerPoolOptions: WorkerPoolOptions,
+    workerOptions?: threads.WorkerOptions,
+    duplexOptions?: stream.DuplexOptions
+): Promise<Service> {
     const pool = new WorkerPool(workerPoolOptions, workerOptions, duplexOptions);
     await pool[$ready];
     return createService(pool);
