@@ -2,9 +2,9 @@ import * as threads from "node:worker_threads";
 import * as stream from "node:stream";
 import { CallMessage, ResultMessage } from "network-services";
 
-export class WorkerPort extends stream.Duplex {
-    static $data = Symbol('data');
+const $data = Symbol('data');
 
+export class WorkerPort extends stream.Duplex {
     public port?: threads.MessagePort;
     public messageQueue: Array<CallMessage | ResultMessage> = [];
     
@@ -14,7 +14,7 @@ export class WorkerPort extends stream.Duplex {
             this.port = threads.parentPort;
             this.port.on('message', (message: CallMessage | ResultMessage) => {
                 this.messageQueue.push(message);
-                this.emit(WorkerPort.$data);
+                this.emit($data);
             });
         }
     }
@@ -45,7 +45,7 @@ export class WorkerPort extends stream.Duplex {
             }
         }
         else {
-            this.once(WorkerPort.$data, () => {
+            this.once($data, () => {
                 while (this.messageQueue.length) {
                     const message = this.messageQueue.shift();
                     if (!this.push(message)) {
