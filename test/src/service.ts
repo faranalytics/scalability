@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { createService, WorkerPort } from 'scalability';
+import { createWorkerService } from 'scalability';
+import { Test } from './index.js';
 
 export class Greeter { // Create a friendly Greeter Application.
     greet(kind: string) {
@@ -8,8 +9,10 @@ export class Greeter { // Create a friendly Greeter Application.
     }
 }
 
-const workerPort = new WorkerPort();
-
-const service = createService(workerPort);
+const service = createWorkerService();
 
 service.createServiceApp(new Greeter());
+
+const test = service.createServiceAPI<Test>();
+
+console.log(await test.getN());

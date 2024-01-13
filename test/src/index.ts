@@ -2,14 +2,25 @@ import { createServicePool } from 'scalability';
 import { Greeter } from './service.js';
 
 const service = await createServicePool({
-    workerCount: 1,
+    workerCount: 10,
     workerURL: './dist/service.js'
 });
 
 const greeter = service.createServiceAPI<Greeter>();
 
+export class Test {
+    public n: number = 1;
+    getN(): number {
+        return this.n++;
+    }
+}
+
+const test = new Test();
+
+service.createServiceApp<Test>(test);
+
 const results = [];
-for (let i = 0; i < 10; i++) {
+for (let i = 0; i < 100; i++) {
     results.push(greeter.greet('happy'));
 }
 

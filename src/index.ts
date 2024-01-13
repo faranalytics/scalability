@@ -1,11 +1,12 @@
-import { createServicePool, WorkerPool, WorkerPoolOptions } from "./worker_pool";
+import { createServicePool, WorkerServicePool, WorkerServicePoolOptions } from "./worker_service_pool";
+import {createWorkerService} from "./worker_service";
 import { WorkerPort } from "./worker_port";
-import { createService } from "network-services";
 
 export {
-    WorkerPool,
-    WorkerPoolOptions,
-    WorkerPort,
-    createService,
-    createServicePool
+    createServicePool,
+    createWorkerService,
+    WorkerServicePool,
+    WorkerServicePoolOptions,
+    WorkerPort
 };
+
