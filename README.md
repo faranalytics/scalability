@@ -14,6 +14,7 @@
 
 ## Table of Contents
 - [Installation](#installation)
+- [Concepts](#concepts)
 - [Usage](#usage)
 - [API](#api)
 
@@ -21,7 +22,12 @@
 ```bash
 npm install scalability
 ```
+## Concepts
+*Scalability* is an extension of the *Network-Services* RPC Service facility; hence, the concepts that it introduces are *Network-Services* concepts e.g., Services, Service Apps, and Service APIs.
 
+Please see [the documentation](https://github.com/faranalytics/network-services#concepts) for an explanation of each concept. 
+
+Please see 
 ## Usage
 
 A *Scalability* application consists of a main thread (e.g., `index.js`) and a scaled module (e.g., `service.js`).  In this example the module that runs in the main thread is `index.js` and the module that will be scaled is named `service.js`.
