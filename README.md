@@ -17,7 +17,7 @@
 - [Concepts](#concepts)
     - [Service](https://github.com/faranalytics/network-services#service)
     - [Service App](https://github.com/faranalytics/network-services#service-app)
-    - [Service API](https://github.com/faranalytics/network-services#service-api).
+    - [Service API](https://github.com/faranalytics/network-services#service-api)
 - [Usage](#usage)
 - [API](#api)
 
