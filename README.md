@@ -15,6 +15,9 @@
 ## Table of Contents
 - [Installation](#installation)
 - [Concepts](#concepts)
+    - [Services](https://github.com/faranalytics/network-services#service)
+    - [Service Apps](https://github.com/faranalytics/network-services#service-app)
+    - [Service APIs](https://github.com/faranalytics/network-services#service-api).
 - [Usage](#usage)
 - [API](#api)
 
