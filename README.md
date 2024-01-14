@@ -23,12 +23,12 @@ A *Scalability* application consists of a main thread (e.g., `index.js`) and a s
 
 ### Create `index.ts`.
 This is the module that runs in the main thread.
-#### Import the `createServicePool` helper function and the type of the service application that will run in the Worker thread.
+#### Import the `createServicePool` helper function and the ***type*** of the service application that will run in the Worker thread.
 ```ts
 import { createServicePool } from 'scalability';
 import { Greeter } from './service.js';
 ```
-#### Create a service pool consisting of 10 instances of the `Greeter` class.
+#### Create a Service pool consisting of 10 instances of the `service.js` module, each running in a Worker thread.
 ```ts
 const service = await createServicePool({
     workerCount: 10,
@@ -39,20 +39,20 @@ const service = await createServicePool({
 ```ts
 const greeter = service.createServiceAPI<Greeter>();
 ```
-#### Call the `greet` method on the `Greeter` 10 times and log the results.
+#### Call the `greet` method on the `Greeter` 100 times and log the results.
+The `Greeter.greet` method returns a promise because it is called asynchronously using a `MessagePort`.
 ```ts
 const results = [];
-for (let i = 0; i < 10; i++) {
+for (let i = 0; i < 100; i++) {
     results.push(greeter.greet('happy'));
 }
 
 console.log(await Promise.all(results));
 ```
-
-Each call to `Greeter.greet` will run in a one of the 10 Worker thread.
+Each call to `Greeter.greet` will run in a one of the 10 spawned Worker threads.
 
 ### Create `service.ts`.
-This is the module that will be scaled.
+This is the module that contains the `Greeter` Service App.  The `createServicePool` helper function will create 10 instances of `service.js`.
 
 #### Import the `createWorkerService` helper function
 ```ts
