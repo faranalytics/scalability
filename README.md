@@ -12,6 +12,11 @@
 - Infinite property nesting; you can use a Service API to call *nested* properties on a Service App at any depth.
 - Bi-directional asynchronous RPC - communication goes both ways - a Worker thread can create a Service API and can call functions in the main thread.
 
+## Table of Contents
+- [Installation](#installation)
+- [Usage](#usage)
+- [API](#api)
+
 ## Installation
 ```bash
 npm install scalability
