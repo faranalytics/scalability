@@ -5,6 +5,7 @@ import { CallMessage, ResultMessage, Service, createService } from "network-serv
 export interface WorkerServicePoolOptions {
     workerCount: number;
     workerURL: string | URL;
+    restartWorkerOnError?: boolean;
     workerOptions?: threads.WorkerOptions;
     duplexOptions?: stream.DuplexOptions;
 }
@@ -14,6 +15,9 @@ export const $ready = Symbol('ready');
 export const $messageQueue = Symbol('messageQueue');
 export const $workers = Symbol('workers');
 export const $callRegistrar = Symbol('callRegistrar ');
+export const $startWorker = Symbol('startWorker');
+export const $workerPoolOptions = Symbol('workerPoolOptions');
+export const $restartWorkerOnError = Symbol('restartWorkerOnError');
 
 export class WorkerServicePool extends stream.Duplex {
 
@@ -21,32 +25,49 @@ export class WorkerServicePool extends stream.Duplex {
     public [$messageQueue]: Array<CallMessage | ResultMessage> = [];
     public [$workers]: Array<threads.Worker> = [];
     public [$callRegistrar]: Map<string, threads.Worker>;
+    public [$workerPoolOptions]: WorkerServicePoolOptions;
+    public [$restartWorkerOnError]: boolean;
 
     constructor(workerPoolOptions: WorkerServicePoolOptions) {
         super({ ...workerPoolOptions.duplexOptions, ...{ objectMode: true } });
 
         this[$callRegistrar] = new Map<string, threads.Worker>();
+        this[$workerPoolOptions] = workerPoolOptions;
+        this[$restartWorkerOnError] = workerPoolOptions.restartWorkerOnError ?? false;
 
         const workers: Array<Promise<threads.Worker>> = [];
         for (let i = 0; i < workerPoolOptions.workerCount; i++) {
-            workers.push(new Promise<threads.Worker>((r, e) => {
-                const worker = new threads.Worker(workerPoolOptions.workerURL, workerPoolOptions.workerOptions);
-                worker.on('message', (message: CallMessage | ResultMessage) => {
-                    if (message.type === 0) { // A CallMessage was sent by a Worker.
-                        this[$callRegistrar].set(message.id, worker);
-                    }
-                    this[$messageQueue].push(message);
-                    this.emit($data);
-                });
-                worker.once('error', e);
-                worker.once('online', () => {
-                    worker.removeListener('error', e);
-                    r(worker);
-                });
-                this[$workers].push(worker);
-            }));
+            workers.push(this[$startWorker]());
         }
+
         this[$ready] = Promise.all(workers);
+    }
+
+    async [$startWorker](): Promise<threads.Worker> {
+        return new Promise<threads.Worker>((r, e) => {
+            const worker = new threads.Worker(this[$workerPoolOptions].workerURL, this[$workerPoolOptions].workerOptions);
+            worker.on('message', (message: CallMessage | ResultMessage) => {
+                if (message.type === 0) { // A CallMessage was sent by a Worker.
+                    this[$callRegistrar].set(message.id, worker);
+                }
+                this[$messageQueue].push(message);
+                this.emit($data);
+            });
+            worker.once('error', e);
+            worker.once('online', () => {
+                worker.removeListener('error', e);
+                // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                worker.once('error', async () => {
+                    this[$workers].splice(this[$workers].indexOf(worker), 1);
+                    if (this[$restartWorkerOnError]) {
+                        const worker = await this[$startWorker]();
+                        this[$workers].push(worker);
+                    }
+                });
+                r(worker);
+            });
+            this[$workers].push(worker);
+        });
     }
 
     async _write(chunk: CallMessage | ResultMessage, encoding: BufferEncoding, callback: (error?: Error | null) => void): Promise<void> {

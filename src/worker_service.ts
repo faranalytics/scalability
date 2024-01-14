@@ -18,4 +18,3 @@ export function createWorkerService(options?: ServiceOptions & MuxOptions): Serv
     const workerPort = new WorkerPort();
     return new WorkerService(workerPort, options);
 }
-

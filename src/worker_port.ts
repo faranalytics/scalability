@@ -7,7 +7,7 @@ const $data = Symbol('data');
 export class WorkerPort extends stream.Duplex {
     public port?: threads.MessagePort;
     public messageQueue: Array<CallMessage | ResultMessage> = [];
-    
+
     constructor(options?: stream.DuplexOptions) {
         super({ ...options, ...{ objectMode: true } });
         if (threads.parentPort) {
