@@ -12,6 +12,11 @@
 - Infinite property nesting; you can use a Service API to call *nested* properties on a Service App at any depth.
 - Bi-directional asynchronous RPC - communication goes both ways - a Worker thread can create a Service API and can call functions in the main thread.
 
+## Installation
+```bash
+npm install scalability
+```
+
 ## Usage
 
 A *Scalability* application consists of a main thread (e.g., `index.js`) and a scaled module (e.g., `service.js`).  In this example the module that runs in the main thread is `index.js` and the module that will be scaled is named `service.js`.
