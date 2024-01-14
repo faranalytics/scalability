@@ -75,4 +75,30 @@ const service = createWorkerService();
 ```ts
 service.createServiceApp(new Greeter());
 ```
+## API
+### scalability.createServicePool(options)
+- `options` `<WorkerServicePoolOptions>`
+    - `workerCount` `<number>` The number of worker threads to be spawned.
+    - `workerURL` `<string>` or `<URL>` The URL or path to the `.js` module file.  This is the module that will be scaled according to the value specified for `workerCount`.
+    - `restartWorkerOnError` `<boolean>` Optionally restart Workers that emit an `error`. **Default:** `false`
+    - `workerOptions`: `<threads.WorkerOptions>` Optional `worker_threads.WorkerOptions` to be passed to `worker_threads.Worker`.
+- Returns: `Promise<Service>`
 
+Use the `createServicePool` helper function in the main thread in order to create a pool of Services.
+
+### scalability.createWorkerService()
+- Returns: `<Service>`
+
+Use the `createWorkerService` helper function to create a Service in the scaled module.
+
+### service.createServiceApp\<T\>(app, options)
+- `app` `<object>` An instance of your application.
+- `options` `<ServiceAppOptions<T>>`
+    - `paths` `<Array<PropPath<Async<T>>>>` An `Array` of *property paths* (i.e., dot-path `string`s).  *If defined*, only property paths in this list may be called on the Service App. Each element of the Array is a `PropPath` and a `PropPath` is simply a dot-path `string` representation of a property path.  Please see the [Nested Method example](https://github.com/faranalytics/network-services/tree/main/examples/nested_method) for a working example.  **Default:** `undefined`.
+- Returns: `<ServiceApp<T>>`
+
+### service.createServiceAPI\<T\>(options)
+- `options` `<ServiceAPIOptions>`
+    - `timeout` `<number>` Optional argument in milliseconds that specifies the `timeout` for function calls. **Default:** `undefined` (i.e., no timeout).
+    - `identifierGenerator` `<IdentifierGenerator>` An optional instance of a class that implements the `network-services.IdentifierGenerator` interface.  This class instance will be used in order to generate an unique identifier for each API call.  The default `network-services.NumericIdentifierGenerator` will work for the common case; however, a more robust solution may be required for certain custom `net.Duplex` implementations. **Default:** `network-services.NumericIdentifierGenerator`
+- Returns: `<Async<T>>` A `Proxy` of type `<T>` that consists of asynchronous analogues of methods in `<T>`.
