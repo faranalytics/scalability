@@ -30,7 +30,7 @@ npm install scalability
 ## Concepts
 *Scalability* is an extension of the *Network-Services* RPC Service facility; hence, the concepts that it introduces are *Network-Services* concepts e.g., [Services](https://github.com/faranalytics/network-services#service), [Service Apps](https://github.com/faranalytics/network-services#service-app), and [Service APIs](https://github.com/faranalytics/network-services#service-api).
 
-Please see the [*Network-Services*](https://github.com/faranalytics/network-services#concepts) if you would like to learn more about these concepts. 
+Please see the [*Network-Services*](https://github.com/faranalytics/network-services#concepts) documentation if you would like to learn more about these concepts. 
 
 ## Usage
 
