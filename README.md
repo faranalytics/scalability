@@ -12,7 +12,7 @@
 - Call methods on a Service App running in a Worker thread using a type-safe API: *code completion*, *parameter types*, and *return types*.
 - Return values *and* Errors are marshalled back to the caller.
 - Infinite property nesting; you can use a Service API to call *nested* properties on a Service App at any depth.
-- Bi-directional asynchronous RPC - communication goes both ways - a Worker thread can create a Service API and can call functions in the main thread.
+- Bi-directional asynchronous RPC - communication goes both ways - *Scalability* allows for calls from the main thread to a Worker and from a Worker to the main thread.
 
 ## Table of Contents
 - [Installation](#installation)
