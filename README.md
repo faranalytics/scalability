@@ -67,7 +67,7 @@ console.log(await Promise.all(results));
 Each call to `Greeter.greet` will run in a one of the 10 spawned Worker threads.
 
 ### Create `service.ts`.
-This is the module that contains the `Greeter` Service App.  The `createServicePool` helper function will create 10 instances of `service.js`.
+This is the scaled module specified in the options of the `createServicePool` helper function.  It contains the `Greeter` Service App.  The `createServicePool` helper function will create 10 instances of `service.js`.
 
 #### Import the `createWorkerService` helper function
 ```ts
