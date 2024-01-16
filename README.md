@@ -91,20 +91,20 @@ const service = createWorkerService();
 service.createServiceApp(new Greeter());
 ```
 ## API
-### scalability.createServicePool(options)
-- `options` `<WorkerServicePoolOptions>`
+### scalability.createService(options)
+- `options` `<WorkerPoolOptions>`
     - `workerCount` `<number>` The number of worker threads to be spawned.
     - `workerURL` `<string>` or `<URL>` The URL or path to the `.js` module file.  This is the module that will be scaled according to the value specified for `workerCount`.
     - `restartWorkerOnError` `<boolean>` Optionally restart Workers that emit an `error`. **Default:** `false`
     - `workerOptions`: `<threads.WorkerOptions>` Optional `worker_threads.WorkerOptions` to be passed to the `worker_threads.Worker` constructor.
 - Returns: `Promise<Service>`
 
-Use the `createServicePool` helper function in the main thread in order to create a pool of Workers.
+Use the `createService` helper function *in the main thread* in order to create a pool of Workers.
 
 ### scalability.createWorkerService()
 - Returns: `<Service>`
 
-Use the `createWorkerService` helper function to create a Service in the scaled module.
+Use the `createWorkerService` helper function *in a Woker thread* to create a Service.
 
 ### service.createServiceApp\<T\>(app, options)
 - `app` `<object>` An instance of your application.

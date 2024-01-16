@@ -1,7 +1,7 @@
-import { createServicePool } from 'scalability';
+import { createService } from 'scalability';
 import { Greeter } from './service.js';
 
-const service = await createServicePool({
+const service = await createService({
     workerCount: 10,
     workerURL: './dist/service.js'
 });

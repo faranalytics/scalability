@@ -1,8 +1,8 @@
 import * as threads from "node:worker_threads";
 import * as stream from "node:stream";
-import { CallMessage, ResultMessage, Service, createService } from "network-services";
+import * as ns from "network-services";
 
-export interface WorkerServicePoolOptions {
+export interface WorkerPoolOptions {
     workerCount: number;
     workerURL: string | URL;
     restartWorkerOnError?: boolean;
@@ -19,16 +19,16 @@ export const $startWorker = Symbol('startWorker');
 export const $workerPoolOptions = Symbol('workerPoolOptions');
 export const $restartWorkerOnError = Symbol('restartWorkerOnError');
 
-export class WorkerServicePool extends stream.Duplex {
+export class WorkerPool extends stream.Duplex {
 
     public [$ready]: Promise<Array<threads.Worker>>;
-    public [$messageQueue]: Array<CallMessage | ResultMessage> = [];
+    public [$messageQueue]: Array<ns.CallMessage | ns.ResultMessage> = [];
     public [$workers]: Array<threads.Worker> = [];
     public [$callRegistrar]: Map<string, threads.Worker>;
-    public [$workerPoolOptions]: WorkerServicePoolOptions;
+    public [$workerPoolOptions]: WorkerPoolOptions;
     public [$restartWorkerOnError]: boolean;
 
-    constructor(workerPoolOptions: WorkerServicePoolOptions) {
+    constructor(workerPoolOptions: WorkerPoolOptions) {
         super({ ...workerPoolOptions.duplexOptions, ...{ objectMode: true } });
 
         this[$callRegistrar] = new Map<string, threads.Worker>();
@@ -46,7 +46,7 @@ export class WorkerServicePool extends stream.Duplex {
     async [$startWorker](): Promise<threads.Worker> {
         return new Promise<threads.Worker>((r, e) => {
             const worker = new threads.Worker(this[$workerPoolOptions].workerURL, this[$workerPoolOptions].workerOptions);
-            worker.on('message', (message: CallMessage | ResultMessage) => {
+            worker.on('message', (message: ns.CallMessage | ns.ResultMessage) => {
                 if (message.type === 0) { // A CallMessage was sent by a Worker.
                     this[$callRegistrar].set(message.id, worker);
                 }
@@ -70,7 +70,7 @@ export class WorkerServicePool extends stream.Duplex {
         });
     }
 
-    async _write(chunk: CallMessage | ResultMessage, encoding: BufferEncoding, callback: (error?: Error | null) => void): Promise<void> {
+    async _write(chunk: ns.CallMessage | ns.ResultMessage, encoding: BufferEncoding, callback: (error?: Error | null) => void): Promise<void> {
         // The Mux writes data to the stream.Duplex.
         try {
             let worker: threads.Worker | undefined;
@@ -125,8 +125,8 @@ export class WorkerServicePool extends stream.Duplex {
     }
 }
 
-export async function createServicePool(workerPoolOptions: WorkerServicePoolOptions): Promise<Service> {
-    const pool = new WorkerServicePool(workerPoolOptions);
+export async function createService(workerPoolOptions: WorkerPoolOptions): Promise<ns.Service> {
+    const pool = new WorkerPool(workerPoolOptions);
     await pool[$ready];
-    return createService(pool);
+    return ns.createService(pool);
 }

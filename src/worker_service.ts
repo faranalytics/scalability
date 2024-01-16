@@ -14,7 +14,7 @@ export class WorkerService extends Service {
     }
 }
 
-export function createWorkerService(): Service {
+export function createWorkerService(): WorkerService {
     const workerPort = new WorkerPort();
     return new WorkerService(workerPort);
 }
