@@ -40,7 +40,7 @@ A *Scalability* application consists of a main thread (e.g., `index.js`) and a s
 
 This is the module that runs in the main thread.
 
-#### Import the `createService` helper function and the ***type*** of the service application that will run in the Worker thread.
+#### Import the `createService` helper function and the ***type*** of the service application (i.e., `Greeter`) that will run in the Worker thread.
 ```ts
 import { createService } from 'scalability';
 import { Greeter } from './service.js';
