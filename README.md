@@ -38,14 +38,14 @@ A *Scalability* application consists of a main thread (e.g., `index.js`) and a s
 
 ### Create `index.ts`.
 This is the module that runs in the main thread.
-#### Import the `createServicePool` helper function and the ***type*** of the service application that will run in the Worker thread.
+#### Import the `createService` helper function and the ***type*** of the service application that will run in the Worker thread.
 ```ts
-import { createServicePool } from 'scalability';
+import { createService } from 'scalability';
 import { Greeter } from './service.js';
 ```
 #### Create a Service pool consisting of 10 instances of the `service.js` module, each running in a Worker thread.
 ```ts
-const service = await createServicePool({
+const service = await createService({
     workerCount: 10,
     workerURL: './dist/service.js'
 });
@@ -67,7 +67,7 @@ console.log(await Promise.all(results));
 Each call to `Greeter.greet` will run in a one of the 10 spawned Worker threads.
 
 ### Create `service.ts`.
-This is the scaled module specified in the options of the `createServicePool` helper function.  It contains the `Greeter` Service App.  The `createServicePool` helper function will create 10 instances of `service.js`.
+This is the scaled module specified in the options of the `createService` helper function.  It contains the `Greeter` Service App.  The `createService` helper function will create 10 instances of `service.js`.
 
 #### Import the `createWorkerService` helper function
 ```ts
