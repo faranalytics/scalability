@@ -82,7 +82,7 @@ export class Greeter { // Create a friendly Greeter Application.
     }
 }
 ```
-#### Create a use the `createWorkerService` helper function in order to create a Service.
+#### Use the `createWorkerService` helper function in order to create a Service.
 ```ts
 const service = createWorkerService();
 ```
