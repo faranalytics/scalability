@@ -34,7 +34,7 @@ Please see the [*Network-Services*](https://github.com/faranalytics/network-serv
 
 ## Usage
 
-A *Scalability* application consists of a main thread (e.g., `index.js`) and a scaled module (e.g., `service.js`).  In this example the module that runs in the main thread is `index.js` and the module that will be scaled is named `service.js`.
+A *Scalability* application consists of a main thread (e.g., `index.js`) and a scaled module (e.g., `service.js`).  In this example the module that runs in the main thread is named `index.js` and the module that will be scaled is named `service.js`.
 
 ### Create a `index.ts` module.
 
