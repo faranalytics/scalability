@@ -98,7 +98,7 @@ service.createServiceApp(new Greeter());
     - `workerCount` `<number>` The number of worker threads to be spawned.
     - `workerURL` `<string>` or `<URL>` The URL or path to the `.js` module file.  This is the module that will be scaled according to the value specified for `workerCount`.
     - `restartWorkerOnError` `<boolean>` Optionally restart Workers that emit an `error`. **Default:** `false`
-    - `workerOptions`: `<threads.WorkerOptions>` Optional `worker_threads.WorkerOptions` to be passed to the `worker_threads.Worker` constructor.
+    - `workerOptions`: `<worker_threads.WorkerOptions>` Optional `worker_threads.WorkerOptions` to be passed to the `worker_threads.Worker` constructor.
 - Returns: `Promise<Service>`
 
 Use the `createService` helper function *in the main thread* in order to create a pool of Workers.
