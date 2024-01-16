@@ -36,8 +36,10 @@ Please see the [*Network-Services*](https://github.com/faranalytics/network-serv
 
 A *Scalability* application consists of a main thread (e.g., `index.js`) and a scaled module (e.g., `service.js`).  In this example the module that runs in the main thread is `index.js` and the module that will be scaled is named `service.js`.
 
-### Create `index.ts`.
+### Create a `index.ts` module.
+
 This is the module that runs in the main thread.
+
 #### Import the `createService` helper function and the ***type*** of the service application that will run in the Worker thread.
 ```ts
 import { createService } from 'scalability';
@@ -66,8 +68,8 @@ console.log(await Promise.all(results));
 ```
 Each call to `Greeter.greet` will run in a one of the 10 spawned Worker threads.
 
-### Create `service.ts`.
-This is the scaled module specified in the options of the `createService` helper function.  It contains the `Greeter` Service App.  The `createService` helper function will create 10 instances of `service.js`.
+### Create a `service.ts` module.
+This is the scaled module specified in the options of the `createService` helper function.  It contains the `Greeter` Service App.
 
 #### Import the `createWorkerService` helper function
 ```ts
