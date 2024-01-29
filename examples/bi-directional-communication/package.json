@@ -12,7 +12,7 @@
   "author": "FAR",
   "license": "MIT",
   "dependencies": {
-    "scalability": "file:../.."
+    "scalability": "^0.3.0"
   },
   "type": "module",
   "devDependencies": {
