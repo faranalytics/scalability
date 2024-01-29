@@ -13,6 +13,7 @@ const workerPool = createWorkerPool({
     workerURL: './dist/service.js'
 });
 
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
 await new Promise((r) => workerPool.on('ready', r));
 
 const app = new MainThreadApp();
