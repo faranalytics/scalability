@@ -112,7 +112,7 @@ That's all it takes to scale this `Greeter` application.
 
 ## API
 ### scalability.createService(stream)
-- `stream` `<WorkerPool | PortStream>` An instance of a `WorkerPool` or an instance of a `PortStream`.  This is a type narrowed verion of the *Net-Services* `createService` helper function.  This helper function will accept either a `WorkerPool` or a `PortStream` as an argument, both of which are `stream.Duplex`.
+- `stream` `<WorkerPool | PortStream>` An instance of a `WorkerPool` or an instance of a `PortStream`.  This is a type narrowed version of the *Net-Services* `createService` helper function.  This helper function will accept either a `WorkerPool` or a `PortStream` as an argument, both of which are `stream.Duplex`.
 - Returns: `<Service>`
 
 ### scalability.createWorkerPool(options)
