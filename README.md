@@ -59,9 +59,10 @@ const workerPool = createWorkerPool({
 await new Promise((r) => workerPool.on('ready', r));
 ```
 
-#### Create a Service API of type `Greeter`.
+#### Create a Service using the `WorkerPool` stream and a Service API of type `Greeter`.
 The `greeter` object will support *code completion*, *parameter types*, and *return types*.
 ```ts
+const service = createService(workerPool);
 const greeter = service.createServiceAPI<Greeter>();
 ```
 
