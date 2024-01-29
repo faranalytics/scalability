@@ -115,17 +115,6 @@ That's all it takes to scale this `Greeter` application.
 - `stream` `<WorkerPool | PortStream>` An instance of a `WorkerPool` or an instance of a `PortStream`.  This is a type narrowed version of the *Net-Services* `createService` helper function.  This helper function will accept either a `WorkerPool` or a `PortStream` as an argument, both of which are `stream.Duplex`.
 - Returns: `<Service>`
 
-### scalability.createWorkerPool(options)
-- `options` `<WorkerPoolOptions>`
-    - `workerCount` `<number>` Optional argument that specifies the number of worker threads to be spawned.
-    - `workerURL` `<string | URL>`  The URL or path to the `.js` module file. This is the module that will be scaled according to the value specified for `workerCount`.
-    - `restartWorkerOnError` `<boolean>` A boolean setting specifying if Workers should be restarted on `error`. **Default**: `false`
-    - `workerOptions` `<threads.WorkerOptions>` Optional `WorkerOptions` to be passed to each Worker instance.
-    - `duplexOptions` `<stream.DuplexOptions>` Optional `DuplexOptions` to be passed to the `stream.Duplex` i.e., the parent class of the `WorkerPool`.
-- Returns: `<WorkerPool>`
-
-A `WorkerPool` *is a* `stream.Duplex`, so it can be passed to the *Net-Services* `createService` helper function.
-
 ### service.createServiceApp\<T\>(app, options)
 - `app` `<object>` An instance of your application.
 - `options` `<ServiceAppOptions<T>>`
@@ -136,3 +125,18 @@ A `WorkerPool` *is a* `stream.Duplex`, so it can be passed to the *Net-Services*
 - `options` `<ServiceAPIOptions>`
     - `timeout` `<number>` Optional argument in milliseconds that specifies the `timeout` for function calls. **Default:** `undefined` (i.e., no timeout).
 - Returns: `<Async<T>>` A `Proxy` of type `<T>` that consists of asynchronous analogues of methods in `<T>`.
+
+### scalability.createWorkerPool(options)
+- `options` `<WorkerPoolOptions>`
+    - `workerCount` `<number>` Optional argument that specifies the number of worker threads to be spawned.
+    - `workerURL` `<string | URL>`  The URL or path to the `.js` module file. This is the module that will be scaled according to the value specified for `workerCount`.
+    - `restartWorkerOnError` `<boolean>` A boolean setting specifying if Workers should be restarted on `error`. **Default**: `false`
+    - `workerOptions` `<worker_threads.WorkerOptions>` Optional `worker_threads.WorkerOptions` to be passed to each Worker instance.
+    - `duplexOptions` `<stream.DuplexOptions>` Optional `stream.DuplexOptions` to be passed to the `stream.Duplex` i.e., the parent class of the `WorkerPool`.
+- Returns: `<WorkerPool>`
+
+A `WorkerPool` *is a* `stream.Duplex`, so it can be passed to the *Net-Services* `createService` helper function.
+
+### scalability.createPortStream(options)
+- `options` `<stream.DuplexOptions>` Optional `stream.DuplexOptions` to be passed to the `stream.Duplex` i.e., the parent class of the `PortStream`.
+
