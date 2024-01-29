@@ -4,7 +4,7 @@ import { CallMessage, ResultMessage } from "network-services";
 
 const $data = Symbol('data');
 
-export class WorkerPort extends stream.Duplex {
+export class PortStreamAdapter extends stream.Duplex {
     public port?: threads.MessagePort;
     public messageQueue: Array<CallMessage | ResultMessage> = [];
 
@@ -21,10 +21,11 @@ export class WorkerPort extends stream.Duplex {
 
     async _write(chunk: CallMessage | ResultMessage, encoding: BufferEncoding, callback: (error?: Error | null) => void): Promise<void> {
         try {
-            await new Promise<null>((r, j) => {
-                this.port?.once('messageerror', j);
+            await new Promise<null>((r, e) => {
+                this.port?.once('messageerror', e);
+                console.log();
                 this.port?.postMessage(chunk);
-                this.port?.removeListener('messageerror', j);
+                this.port?.removeListener('messageerror', e);
                 r(null);
             });
             callback();

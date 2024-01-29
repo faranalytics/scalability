@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { createWorkerService } from 'scalability';
-import { Test } from './index.js';
+import { PortStreamAdapter, createService } from 'scalability';
+import { MainThreadApp } from './index.js';
 
 export class Greeter { // Create a friendly Greeter Application.
     greet(kind: string) {
@@ -9,10 +8,12 @@ export class Greeter { // Create a friendly Greeter Application.
     }
 }
 
-const service = createWorkerService();
+const portStream = new PortStreamAdapter();
+
+const service = createService(portStream);
 
 service.createServiceApp(new Greeter());
 
-const test = service.createServiceAPI<Test>();
+const app = service.createServiceAPI<MainThreadApp>();
 
-console.log(await test.getN());
+console.log(await app.getNumber());

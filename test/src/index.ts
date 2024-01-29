@@ -1,30 +1,40 @@
-import { createService } from 'scalability';
+import { createService, WorkerPoolStreamAdapter } from 'scalability';
 import { Greeter } from './service.js';
 
-const service = await createService({
-    workerCount: 10,
-    workerURL: './dist/service.js'
-});
-
-const greeter = service.createServiceAPI<Greeter>();
-
-export class Test {
+export class MainThreadApp {
     public n: number = 1;
-    getN(): number {
+    getNumber(): number {
         return this.n++;
     }
 }
 
-const test = new Test();
+const workerPoolStream = new WorkerPoolStreamAdapter({
+    workerCount: 1,
+    workerURL: './dist/service.js'
+});
 
-service.createServiceApp<Test>(test);
+const app = new MainThreadApp();
+const service = createService(workerPoolStream);
+service.createServiceApp<MainThreadApp>(app);
 
-const results = [];
-for (let i = 0; i < 100; i++) {
-    results.push(greeter.greet('happy'));
-}
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+workerPoolStream.on('ready', async () => {
 
-console.time('test');
-const result = await Promise.all(results);
-console.log(result);
-console.timeEnd('test');
+    const greeter = service.createServiceAPI<Greeter>();
+
+    const results = [];
+    for (let i = 0; i < 1; i++) {
+        results.push(greeter.greet('happy'));
+    }
+
+    console.time('test');
+    const result = await Promise.all(results);
+    console.log(result);
+    console.timeEnd('test');
+
+
+});
+
+
+
+

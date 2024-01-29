@@ -32,16 +32,30 @@
   },
   "keywords": [
     "api",
+    "cluster",
+    "concurrency",
+    "hamsters.js",
+    "http",
+    "https",
     "ipc",
     "marshal",
     "microservice",
     "microservices",
+    "multithreaded",
+    "multithreading",
     "net",
+    "parallelism",
+    "pm2",
     "rpc",
+    "scalable",
     "service",
+    "server",
     "tcp",
+    "thread",
     "tls",
     "typesafe",
-    "typescript"
+    "typescript",
+    "web",
+    "worker"
   ]
 }

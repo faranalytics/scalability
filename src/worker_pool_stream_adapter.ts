@@ -2,7 +2,7 @@ import * as threads from "node:worker_threads";
 import * as stream from "node:stream";
 import * as ns from "network-services";
 
-export interface WorkerPoolOptions {
+export interface WorkerPoolStreamAdapterOptions {
     workerCount: number;
     workerURL: string | URL;
     restartWorkerOnError?: boolean;
@@ -16,36 +16,45 @@ export const $messageQueue = Symbol('messageQueue');
 export const $workers = Symbol('workers');
 export const $callRegistrar = Symbol('callRegistrar ');
 export const $startWorker = Symbol('startWorker');
-export const $workerPoolOptions = Symbol('workerPoolOptions');
+export const $workerPoolStreamAdapterOptions = Symbol('workerPoolOptions');
 export const $restartWorkerOnError = Symbol('restartWorkerOnError');
 
-export class WorkerPool extends stream.Duplex {
+export class WorkerPoolStreamAdapter extends stream.Duplex {
 
-    public [$ready]: Promise<Array<threads.Worker>>;
     public [$messageQueue]: Array<ns.CallMessage | ns.ResultMessage> = [];
     public [$workers]: Array<threads.Worker> = [];
     public [$callRegistrar]: Map<string, threads.Worker>;
-    public [$workerPoolOptions]: WorkerPoolOptions;
+    public [$workerPoolStreamAdapterOptions]: WorkerPoolStreamAdapterOptions;
     public [$restartWorkerOnError]: boolean;
 
-    constructor(workerPoolOptions: WorkerPoolOptions) {
-        super({ ...workerPoolOptions.duplexOptions, ...{ objectMode: true } });
+    constructor(workerPoolStreamAdapterOptions: WorkerPoolStreamAdapterOptions) {
+        super({ ...workerPoolStreamAdapterOptions.duplexOptions, ...{ objectMode: true } });
 
         this[$callRegistrar] = new Map<string, threads.Worker>();
-        this[$workerPoolOptions] = workerPoolOptions;
-        this[$restartWorkerOnError] = workerPoolOptions.restartWorkerOnError ?? false;
+        this[$workerPoolStreamAdapterOptions] = workerPoolStreamAdapterOptions;
+        this[$restartWorkerOnError] = workerPoolStreamAdapterOptions.restartWorkerOnError ?? false;
 
         const workers: Array<Promise<threads.Worker>> = [];
-        for (let i = 0; i < workerPoolOptions.workerCount; i++) {
+        for (let i = 0; i < workerPoolStreamAdapterOptions.workerCount; i++) {
             workers.push(this[$startWorker]());
         }
 
-        this[$ready] = Promise.all(workers);
+        void (async () => {
+            const values = await Promise.allSettled(workers);
+
+            for (const value of values) {
+                if (value.status == 'rejected') {
+                    console.error(value.reason);
+                }
+            }
+
+            this.emit('ready');
+        })();
     }
 
     async [$startWorker](): Promise<threads.Worker> {
         return new Promise<threads.Worker>((r, e) => {
-            const worker = new threads.Worker(this[$workerPoolOptions].workerURL, this[$workerPoolOptions].workerOptions);
+            const worker = new threads.Worker(this[$workerPoolStreamAdapterOptions].workerURL, this[$workerPoolStreamAdapterOptions].workerOptions);
             worker.on('message', (message: ns.CallMessage | ns.ResultMessage) => {
                 if (message.type === 0) { // A CallMessage was sent by a Worker.
                     this[$callRegistrar].set(message.id, worker);
@@ -71,7 +80,7 @@ export class WorkerPool extends stream.Duplex {
     }
 
     async _write(chunk: ns.CallMessage | ns.ResultMessage, encoding: BufferEncoding, callback: (error?: Error | null) => void): Promise<void> {
-        // The Mux writes data to the stream.Duplex.
+        // The Mux writes data to *this* stream.Duplex.
         try {
             let worker: threads.Worker | undefined;
 
@@ -103,7 +112,7 @@ export class WorkerPool extends stream.Duplex {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _read(size: number): void {
-        // The Mux listens for `data` events and reads data from the stream.Duplex.
+        // The Mux listens for `data` events and reads data from *this* stream.Duplex.
         if (this[$messageQueue].length) {
             while (this[$messageQueue].length) {
                 const message = this[$messageQueue].shift();
@@ -123,10 +132,4 @@ export class WorkerPool extends stream.Duplex {
             });
         }
     }
-}
-
-export async function createService(workerPoolOptions: WorkerPoolOptions): Promise<ns.Service> {
-    const pool = new WorkerPool(workerPoolOptions);
-    await pool[$ready];
-    return ns.createService(pool);
 }

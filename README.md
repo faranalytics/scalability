@@ -1,6 +1,6 @@
 # *Scalability*
 
-*Scalability* is a type-safe service scaling facility built on [*Network-Services*](https://github.com/faranalytics/network-services).
+Scalability is a type-safe service scaling facility built on Network-Services.
 
 ## Introduction
 
