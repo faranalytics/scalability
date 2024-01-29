@@ -1,6 +1,7 @@
-import { Async, MuxOptions, Service, ServiceAPIOptions, ServiceOptions } from "network-services";
+import { Async, Service, ServiceAPIOptions } from "network-services";
 import { UUIDIdentifierGenerator } from "./uuid_identifier_generator.js";
-import * as stream from "stream";
+import { WorkerPool } from "./worker_pool.js";
+import { PortStream } from "./port_stream.js";
 
 export class ScalableService extends Service {
 
@@ -9,6 +10,6 @@ export class ScalableService extends Service {
         return super.createServiceAPI<T>({...options, ...{ identifierGenerator: new UUIDIdentifierGenerator() }});
     }
 }
-export function createService(stream: stream.Duplex, options?: ServiceOptions & MuxOptions): ScalableService {
-    return new ScalableService(stream, options);
+export function createService(stream: WorkerPool | PortStream): Service {
+    return new ScalableService(stream);
 }

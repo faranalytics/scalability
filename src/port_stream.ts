@@ -4,7 +4,7 @@ import { CallMessage, ResultMessage } from "network-services";
 
 const $data = Symbol('data');
 
-export class PortStreamAdapter extends stream.Duplex {
+export class PortStream extends stream.Duplex {
     public port?: threads.MessagePort;
     public messageQueue: Array<CallMessage | ResultMessage> = [];
 
@@ -23,7 +23,6 @@ export class PortStreamAdapter extends stream.Duplex {
         try {
             await new Promise<null>((r, e) => {
                 this.port?.once('messageerror', e);
-                console.log();
                 this.port?.postMessage(chunk);
                 this.port?.removeListener('messageerror', e);
                 r(null);
@@ -56,4 +55,8 @@ export class PortStreamAdapter extends stream.Duplex {
             });
         }
     }
+}
+
+export function createPortStream(options?: stream.DuplexOptions) : PortStream {
+    return new PortStream(options);
 }

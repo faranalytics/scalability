@@ -1,4 +1,4 @@
-import { PortStreamAdapter, createService } from 'scalability';
+import { createPortStream, createService } from 'scalability';
 import { MainThreadApp } from './index.js';
 
 export class Greeter { // Create a friendly Greeter Application.
@@ -8,10 +8,9 @@ export class Greeter { // Create a friendly Greeter Application.
     }
 }
 
-const portStream = new PortStreamAdapter();
+const portStream = createPortStream();
 
 const service = createService(portStream);
-
 service.createServiceApp(new Greeter());
 
 const app = service.createServiceAPI<MainThreadApp>();

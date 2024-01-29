@@ -1,12 +1,14 @@
-import { WorkerPoolStreamAdapter, WorkerPoolStreamAdapterOptions } from "./worker_pool_stream_adapter";
-import { PortStreamAdapter } from "./port_stream_adapter";
+import { createWorkerPool, WorkerPool, WorkerPoolOptions } from "./worker_pool";
+import { createPortStream, PortStream } from "./port_stream";
 import { createService } from "./scalable_service";
 import { UUIDIdentifierGenerator } from "./uuid_identifier_generator";
 
 export {
+    createWorkerPool,
+    createPortStream,
     createService,
-    WorkerPoolStreamAdapter,
-    WorkerPoolStreamAdapterOptions,
-    PortStreamAdapter,
+    WorkerPool,
+    WorkerPoolOptions,
+    PortStream,
     UUIDIdentifierGenerator
 };

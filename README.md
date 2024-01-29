@@ -40,22 +40,31 @@ A *Scalability* application consists of a main thread (e.g., `index.js`) and a s
 
 This is the module that runs in the main thread.
 
-#### Import the `createService` helper function and the ***type*** of the service application (i.e., `Greeter`) that will run in the Worker thread.
+#### Import the `createService` and `createWorkerPool` helper functions and the ***type*** of the service application (i.e., `Greeter`) that will run in the Worker thread.
 ```ts
-import { createService } from 'scalability';
+import { createService, createWorkerPool } from 'scalability';
 import { Greeter } from './service.js';
 ```
-#### Create a pool consisting of 10 instances of the `service.js` module, each Service App running in a Worker thread.
+
+#### Create a pool of Workers consisting of 10 instances of the `service.js` module.
 ```ts
-const service = await createService({
+const workerPool = createWorkerPool({
     workerCount: 10,
     workerURL: './dist/service.js'
 });
 ```
-#### Create a Greeter Service API of type `Greeter`.
+
+#### Wait for the Workers to come online.
+```ts
+await new Promise((r) => workerPool.on('ready', r));
+```
+
+#### Create a Service API of type `Greeter`.
+The `greeter` object will support *code completion*, *parameter types*, and *return types*.
 ```ts
 const greeter = service.createServiceAPI<Greeter>();
 ```
+
 #### Call the `greet` method on the `Greeter` 100 times and log the results.
 The `greeter.greet` method returns a promise because it is called asynchronously using a `MessagePort`.
 ```ts
@@ -64,17 +73,18 @@ for (let i = 0; i < 100; i++) {
     results.push(greeter.greet('happy'));
 }
 
-console.log(await Promise.all(results));
+const result = await Promise.all(results);
+console.log(result);
 ```
-Each call to `greeter.greet` will run round-robin in a one of the 10 spawned Worker threads.
 
 ### Create a `service.ts` module.
-This is the scaled module specified in the options of the `createService` helper function.  It contains the `Greeter` Service App.
+This is the scaled module specified in the options of the `WorkerPool` constructor.  It contains the `Greeter` Service App.
 
-#### Import the `createWorkerService` helper function
+#### Import the `PortStream` adapter and the `createService` helper function
 ```ts
-import { createWorkerService } from 'scalability';
+import { createPortStream, createService } from 'scalability';
 ```
+
 #### Create a `Greeter` service.
 ```ts
 export class Greeter { // Create a friendly Greeter Application.
@@ -84,29 +94,36 @@ export class Greeter { // Create a friendly Greeter Application.
     }
 }
 ```
-#### Use the `createWorkerService` helper function in order to create a Service.
+
+#### Create a `PortStream` adapter using the `createPortStream` helper function.
+This adapter will wrap the Worker threads `parentPort` in a `stream.Duplex` in order for it be used by *Network-Services*.
 ```ts
-const service = createWorkerService();
+const portStream = createPortStream();
 ```
-#### Create a Service Application using an instance of `Greeter`.
+
+#### Create a Service using the portStream and create a Service App using an instance of `Greeter`.
 ```ts
+const service = createService(portStream);
 service.createServiceApp(new Greeter());
 ```
+
+That's all it takes to scale this `Greeter` application.
+
 ## API
-### scalability.createService(options)
-- `options` `<WorkerPoolOptions>`
-    - `workerCount` `<number>` The number of worker threads to be spawned.
-    - `workerURL` `<string>` or `<URL>` The URL or path to the `.js` module file.  This is the module that will be scaled according to the value specified for `workerCount`.
-    - `restartWorkerOnError` `<boolean>` Optionally restart Workers that emit an `error`. **Default:** `false`
-    - `workerOptions`: `<worker_threads.WorkerOptions>` Optional `worker_threads.WorkerOptions` to be passed to the `worker_threads.Worker` constructor.
-- Returns: `Promise<Service>`
-
-Use the `createService` helper function *in the main thread* in order to create a pool of Workers.
-
-### scalability.createWorkerService()
+### scalability.createService(stream)
+- `stream` `<WorkerPool | PortStream>` An instance of a `WorkerPool` or an instance of a `PortStream`.  This is a type narrowed verion of the *Net-Services* `createService` helper function.  This helper function will accept either a `WorkerPool` or a `PortStream` as an argument, both of which are `stream.Duplex`.
 - Returns: `<Service>`
 
-Use the `createWorkerService` helper function *in a Woker thread* to create a Service.
+### scalability.createWorkerPool(options)
+- `options` `<WorkerPoolOptions>`
+    - `workerCount` `<number>` The number of Workers to be spawned.
+    - `workerURL` `<string | URL>` Optional argument that specifies the number of worker threads to be spawned. 
+    - `restartWorkerOnError` `<boolean>` A boolean setting specifying if Workers should be restarted on `error`. **Default**: `false`
+    - `workerOptions` `<threads.WorkerOptions>` Optional `WorkerOptions` to be passed to each Worker instance.
+    - `duplexOptions` `<stream.DuplexOptions>` Optional `DuplexOptions` to be passed to the `stream.Duplex` i.e., the parent class of the `WorkerPool`.
+- Returns: `<WorkerPool>`
+
+A `WorkerPool` *is a* `stream.Duplex`, so it can be passed to the *Net-Services* `createService` helper function.
 
 ### service.createServiceApp\<T\>(app, options)
 - `app` `<object>` An instance of your application.
