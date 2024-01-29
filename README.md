@@ -135,8 +135,9 @@ That's all it takes to scale this `Greeter` application.
     - `duplexOptions` `<stream.DuplexOptions>` Optional `stream.DuplexOptions` to be passed to the `stream.Duplex` i.e., the parent class of the `WorkerPool`.
 - Returns: `<WorkerPool>`
 
-A `WorkerPool` *is a* `stream.Duplex`, so it can be passed to the *Net-Services* `createService` helper function.
+A `WorkerPool` wraps the `MessagePorts` of the Worker threads into a single `stream.Duplex`. Hence, a `WorkerPool` *is a* `stream.Duplex`, so it can be passed to the *Net-Services* `createService` helper function.  This is the stream adapter that is used in the module of the main thread.
 
 ### scalability.createPortStream(options)
 - `options` `<stream.DuplexOptions>` Optional `stream.DuplexOptions` to be passed to the `stream.Duplex` i.e., the parent class of the `PortStream`.
 
+A `PortStream` *is a* `stream.Duplex`, so it can be passed to the *Net-Services* `createService` helper function.  This is the stream adapter that is used in the Worker module.
