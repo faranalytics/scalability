@@ -109,7 +109,7 @@ That's all it takes to scale this `Greeter` application.
 
 ## API
 ### scalability.createService(stream)
-- `stream` `<WorkerPool | PortStream>` An instance of a `WorkerPool` or an instance of a `PortStream`.  This is a type narrowed version of the *Net-Services* `createService` helper function.  This helper function will accept either a `WorkerPool` or a `PortStream` as an argument, both of which are `stream.Duplex`.
+- `stream` `<WorkerPool | PortStream>` An instance of a `WorkerPool` or an instance of a `PortStream`.  This is a type narrowed version of the *Network-Services* `createService` helper function.  This helper function will accept either a `WorkerPool` or a `PortStream` as an argument, both of which are `stream.Duplex`.
 - Returns: `<Service>`
 
 ### service.createServiceApp\<T\>(app, options)
@@ -132,9 +132,9 @@ That's all it takes to scale this `Greeter` application.
     - `duplexOptions` `<stream.DuplexOptions>` Optional `stream.DuplexOptions` to be passed to the `stream.Duplex` i.e., the parent class of the `WorkerPool`.
 - Returns: `<WorkerPool>`
 
-A `WorkerPool` wraps the `MessagePorts` of the Worker threads into a single `stream.Duplex`. Hence, a `WorkerPool` *is a* `stream.Duplex`, so it can be passed to the *Net-Services* `createService` helper function.  This is the stream adapter that is used in the module of the main thread.
+A `WorkerPool` wraps the `MessagePorts` of the Worker threads into a single `stream.Duplex`. Hence, a `WorkerPool` *is a* `stream.Duplex`, so it can be passed to the *Network-Services* `createService` helper function.  This is the stream adapter that is used in the module of the main thread.
 
 ### scalability.createPortStream(options)
 - `options` `<stream.DuplexOptions>` Optional `stream.DuplexOptions` to be passed to the `stream.Duplex` i.e., the parent class of the `PortStream`.
 
-A `PortStream` wraps the `parentPort` of the Worker thread into a `stream.Duplex`.  Hence, a `PortStream` *is a* `stream.Duplex`, so it can be passed to the *Net-Services* `createService` helper function.  This is the stream adapter that is used in the Worker module.
+A `PortStream` wraps the `parentPort` of the Worker thread into a `stream.Duplex`.  Hence, a `PortStream` *is a* `stream.Duplex`, so it can be passed to the *Network-Services* `createService` helper function.  This is the stream adapter that is used in the Worker module.
