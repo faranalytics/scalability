@@ -1,6 +1,6 @@
 # *Scalability*
 
-Scalability is a type-safe service scaling facility built on Network-Services.
+Scalability is a type-safe service scaling facility built on *Network-Services*.
 
 ## Introduction
 
@@ -80,7 +80,7 @@ console.log(result);
 ### Create a `service.ts` module.
 This is the scaled module specified in the options of the `WorkerPool` constructor.  It contains the `Greeter` Service App.
 
-#### Import the `PortStream` adapter and the `createService` helper function
+#### Import the `createPortStream` and `createService` helper functions.
 ```ts
 import { createPortStream, createService } from 'scalability';
 ```
@@ -96,7 +96,7 @@ export class Greeter { // Create a friendly Greeter Application.
 ```
 
 #### Create a `PortStream` adapter using the `createPortStream` helper function.
-This adapter will wrap the Worker threads `parentPort` in a `stream.Duplex` in order for it be used by *Network-Services*.
+This adapter will wrap the Worker thread's `parentPort` in a `stream.Duplex` in order for it be used by *Network-Services*.
 ```ts
 const portStream = createPortStream();
 ```
@@ -116,8 +116,8 @@ That's all it takes to scale this `Greeter` application.
 
 ### scalability.createWorkerPool(options)
 - `options` `<WorkerPoolOptions>`
-    - `workerCount` `<number>` The number of Workers to be spawned.
-    - `workerURL` `<string | URL>` Optional argument that specifies the number of worker threads to be spawned. 
+    - `workerCount` `<number>` Optional argument that specifies the number of worker threads to be spawned.
+    - `workerURL` `<string | URL>`  The URL or path to the `.js` module file. This is the module that will be scaled according to the value specified for `workerCount`.
     - `restartWorkerOnError` `<boolean>` A boolean setting specifying if Workers should be restarted on `error`. **Default**: `false`
     - `workerOptions` `<threads.WorkerOptions>` Optional `WorkerOptions` to be passed to each Worker instance.
     - `duplexOptions` `<stream.DuplexOptions>` Optional `DuplexOptions` to be passed to the `stream.Duplex` i.e., the parent class of the `WorkerPool`.
