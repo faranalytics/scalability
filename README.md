@@ -140,4 +140,4 @@ A `WorkerPool` wraps the `MessagePorts` of the Worker threads into a single `str
 ### scalability.createPortStream(options)
 - `options` `<stream.DuplexOptions>` Optional `stream.DuplexOptions` to be passed to the `stream.Duplex` i.e., the parent class of the `PortStream`.
 
-A `PortStream` *is a* `stream.Duplex`, so it can be passed to the *Net-Services* `createService` helper function.  This is the stream adapter that is used in the Worker module.
+A `PortStream` wraps the `parentPort` of the Worker thread into a `stream.Duplex`.  Hence, a `PortStream` *is a* `stream.Duplex`, so it can be passed to the *Net-Services* `createService` helper function.  This is the stream adapter that is used in the Worker module.
