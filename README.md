@@ -4,7 +4,7 @@ Scalability is a type-safe service scaling facility built on *Network-Services*.
 
 ## Introduction
 
-*Scalability* provides a simple and intuitive API for scaling Node.js modules using Worker threads.  You can create a [Service App](https://github.com/faranalytics/network-services#service-app) in your scaled module and call its methods from the main thread using a [Service API](https://github.com/faranalytics/network-services#service-api).  
+*Scalability* provides a simple and intuitive API for scaling Node.js modules using Worker threads.  You can create a [Service App](https://github.com/faranalytics/network-services#service-app) in your scaled module and call its methods from the main thread using a [Service API](https://github.com/faranalytics/network-services#service-api).  Conversely, methods can be called in the main thread from scaled modules in the same way.
 
 *Scalability* allows you to easily transform your single threaded application into a type-safe multithreaded one.
 
