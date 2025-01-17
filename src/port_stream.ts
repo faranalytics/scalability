@@ -57,6 +57,6 @@ export class PortStream extends stream.Duplex {
     }
 }
 
-export function createPortStream(options?: stream.DuplexOptions) : PortStream {
+export function createPortStream(options?: stream.DuplexOptions): PortStream {
     return new PortStream(options);
 }

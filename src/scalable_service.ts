@@ -7,7 +7,7 @@ export class ScalableService extends Service {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public createServiceAPI<T extends object>(options?: ServiceAPIOptions): Async<T> {
-        return super.createServiceAPI<T>({...options, ...{ identifierGenerator: new UUIDIdentifierGenerator() }});
+        return super.createServiceAPI<T>({ ...options, ...{ identifierGenerator: new UUIDIdentifierGenerator() } });
     }
 }
 export function createService(stream: WorkerPool | PortStream): Service {
