@@ -39,7 +39,9 @@ Please see the [_Network-Services_](https://github.com/faranalytics/network-serv
 
 A _Scalability_ application consists of a main thread (e.g., `index.js`) and a scaled module (e.g., `service.js`). In this example the module that runs in the main thread is named `index.js` and the module that will be scaled is named `service.js`.
 
-### Create a `index.ts` module.
+### Instructions
+
+#### Create a `index.ts` Module.
 
 This is the module that runs in the main thread.
 
@@ -84,7 +86,7 @@ const result = await Promise.all(results);
 console.log(result);
 ```
 
-### Create a `service.ts` module.
+#### Create a `service.ts` module.
 
 This is the scaled module specified in the options of the `WorkerPool` constructor. It contains the `Greeter` Service App.
 
