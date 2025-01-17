@@ -1,6 +1,6 @@
-import * as threads from "node:worker_threads";
-import * as stream from "node:stream";
-import * as ns from "network-services";
+import * as threads from 'node:worker_threads';
+import * as stream from 'node:stream';
+import * as ns from 'network-services';
 
 export interface WorkerPoolOptions {
     workerCount: number;

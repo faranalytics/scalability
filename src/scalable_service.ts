@@ -1,7 +1,7 @@
-import { Async, Service, ServiceAPIOptions } from "network-services";
-import { UUIDIdentifierGenerator } from "./uuid_identifier_generator.js";
-import { WorkerPool } from "./worker_pool.js";
-import { PortStream } from "./port_stream.js";
+import { Async, Service, ServiceAPIOptions } from 'network-services';
+import { UUIDIdentifierGenerator } from './uuid_identifier_generator.js';
+import { WorkerPool } from './worker_pool.js';
+import { PortStream } from './port_stream.js';
 
 export class ScalableService extends Service {
 
