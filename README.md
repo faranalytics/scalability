@@ -41,7 +41,7 @@ A _Scalability_ application consists of a main thread (e.g., `index.js`) and a s
 
 ### Instructions
 
-#### Create a `index.ts` Module.
+#### Create a `index.ts` module.
 
 This is the module that runs in the main thread.
 
@@ -133,9 +133,7 @@ That's all it takes to scale this `Greeter` application.
 
 Returns: `<Service>`
 
-### The ServiceApp Class
-
-#### service.createServiceApp\<T\>(app, options)
+_public_ **service.createServiceApp\<T\>(app, options)**
 
 - `app` `<object>` An instance of your application.
 - `options` `<ServiceAppOptions<T>>`
@@ -143,9 +141,7 @@ Returns: `<Service>`
 
 Returns: `<ServiceApp<T>>`
 
-### The ServiceAPI Class
-
-#### service.createServiceAPI\<T\>(options)
+_public_ **service.createServiceAPI\<T\>(options)**
 
 - `options` `<ServiceAPIOptions>`
   - `timeout` `<number>` Optional argument in milliseconds that specifies the `timeout` for function calls. **Default:** `undefined` (i.e., no timeout).
