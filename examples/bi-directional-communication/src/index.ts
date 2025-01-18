@@ -1,3 +1,4 @@
+import { once } from 'node:events';
 import { createService, createWorkerPool } from 'scalability';
 import { Greeter } from './service.js';
 
@@ -13,8 +14,7 @@ const workerPool = createWorkerPool({
     workerURL: './dist/service.js'
 });
 
-// eslint-disable-next-line @typescript-eslint/no-misused-promises
-await new Promise((r) => workerPool.on('ready', r));
+await once(workerPool, 'ready');
 
 const app = new MainThreadApp();
 const service = createService(workerPool);

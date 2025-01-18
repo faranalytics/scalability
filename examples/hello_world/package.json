@@ -7,7 +7,8 @@
     "build": "tsc --build .",
     "clean": "rm -rf ./dist/*",
     "clean:build": "npm run clean && npm run build",
-    "monitor": "nodemon ."
+    "monitor": "nodemon .",
+    "start": "node --expose-gc ."
   },
   "author": "FAR",
   "license": "MIT",

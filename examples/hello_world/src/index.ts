@@ -1,3 +1,4 @@
+import { once } from 'node:events';
 import { createService, createWorkerPool } from 'scalability';
 import { Greeter } from './service.js';
 
@@ -6,7 +7,7 @@ const workerPool = createWorkerPool({
     workerURL: './dist/service.js'
 });
 
-await new Promise((r) => workerPool.on('ready', r));
+await once(workerPool, 'ready');
 
 const service = createService(workerPool);
 
