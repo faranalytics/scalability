@@ -46,6 +46,7 @@ This is the module that runs in the main thread.
 #### Import the `createService` and `createWorkerPool` helper functions and the **_type_** of the service application (i.e., `Greeter`) that will run in the Worker thread.
 
 ```ts
+import { once } from "node:events";
 import { createService, createWorkerPool } from "scalability";
 import { Greeter } from "./service.js";
 ```
@@ -62,7 +63,7 @@ const workerPool = createWorkerPool({
 #### Wait for the Workers to come online.
 
 ```ts
-await new Promise((r) => workerPool.on("ready", r));
+await once(workerPool, "ready");
 ```
 
 #### Create a Service using the `WorkerPool` stream and a Service API of type `Greeter`.
@@ -125,7 +126,7 @@ const service = createService(portStream);
 service.createServiceApp(new Greeter());
 ```
 
-That's all it takes to scale this `Greeter` application.  Please see the [Hello, World! example](https://github.com/faranalytics/scalability/tree/main/examples/hello_world) for a complete working implementation.
+That's all it takes to scale this `Greeter` application. Please see the [Hello, World! example](https://github.com/faranalytics/scalability/tree/main/examples/hello_world) for a complete working implementation.
 
 ## API
 
