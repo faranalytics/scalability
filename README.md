@@ -15,7 +15,7 @@ _Scalability_ allows you to easily transform your single threaded application in
 - Infinite property nesting; you can use a Service API to call _nested_ properties on a Service App at any depth.
 - Bi-directional asynchronous RPC - communication goes both ways - _Scalability_ allows for calls from the main thread to a Worker and from a Worker to the main thread.
 
-## Table of Contents
+## Table of contents
 
 - [Installation](#installation)
 - [Concepts](#concepts)
@@ -39,20 +39,18 @@ Please see the [_Network-Services_](https://github.com/faranalytics/network-serv
 
 A _Scalability_ application consists of a main thread (e.g., `index.js`) and a scaled module (e.g., `service.js`). In this example the module that runs in the main thread is named `index.js` and the module that will be scaled is named `service.js`.
 
-### Instructions
-
-#### Create a `index.ts` module.
+### Implement the `index.ts` module
 
 This is the module that runs in the main thread.
 
-Import the `createService` and `createWorkerPool` helper functions and the **_type_** of the service application (i.e., `Greeter`) that will run in the Worker thread.
+#### Import the `createService` and `createWorkerPool` helper functions and the **_type_** of the service application (i.e., `Greeter`) that will run in the Worker thread.
 
 ```ts
 import { createService, createWorkerPool } from "scalability";
 import { Greeter } from "./service.js";
 ```
 
-Create a pool of Workers consisting of 10 instances of the `service.js` module.
+#### Create a pool of Workers consisting of 10 instances of the `service.js` module.
 
 ```ts
 const workerPool = createWorkerPool({
@@ -61,20 +59,24 @@ const workerPool = createWorkerPool({
 });
 ```
 
-Wait for the Workers to come online.
+#### Wait for the Workers to come online.
 
 ```ts
 await new Promise((r) => workerPool.on("ready", r));
 ```
 
-Create a Service using the `WorkerPool` stream and a Service API of type `Greeter`. The `greeter` object will support _code completion_, _parameter types_, and _return types_.
+#### Create a Service using the `WorkerPool` stream and a Service API of type `Greeter`.
+
+The `greeter` object will support _code completion_, _parameter types_, and _return types_.
 
 ```ts
 const service = createService(workerPool);
 const greeter = service.createServiceAPI<Greeter>();
 ```
 
-Call the `greet` method on the `Greeter` 100 times and log the results. The `greeter.greet` method returns a promise because it is called asynchronously using a `MessagePort`.
+#### Call the `greet` method on the `Greeter` 100 times and log the results.
+
+The `greeter.greet` method returns a promise because it is called asynchronously using a `MessagePort`.
 
 ```ts
 const results = [];
@@ -86,17 +88,17 @@ const result = await Promise.all(results);
 console.log(result);
 ```
 
-#### Create a `service.ts` module.
+### Implement the `service.ts` module
 
 This is the scaled module specified in the options of the `WorkerPool` constructor. It contains the `Greeter` Service App.
 
-Import the `createPortStream` and `createService` helper functions.
+#### Import the `createPortStream` and `createService` helper functions.
 
 ```ts
 import { createPortStream, createService } from "scalability";
 ```
 
-Create a `Greeter` service.
+#### Implement a `Greeter` service.
 
 ```ts
 export class Greeter {
@@ -108,24 +110,26 @@ export class Greeter {
 }
 ```
 
-Create a `PortStream` adapter using the `createPortStream` helper function. This adapter will wrap the Worker thread's `parentPort` in a `stream.Duplex` in order for it be used by _Network-Services_.
+#### Create a `PortStream` adapter instance using the `createPortStream` helper function.
+
+This adapter will wrap the Worker thread's `parentPort` in a `stream.Duplex` in order for it be used by _Network-Services_.
 
 ```ts
 const portStream = createPortStream();
 ```
 
-#### Create a Service using the portStream and create a Service App using an instance of `Greeter`.
+#### Create a Service using the portStream instance and create a Service App using an instance of `Greeter`.
 
 ```ts
 const service = createService(portStream);
 service.createServiceApp(new Greeter());
 ```
 
-That's all it takes to scale this `Greeter` application.
+That's all it takes to scale this `Greeter` application.  Please see the [Hello, World! example](https://github.com/faranalytics/scalability/tree/main/examples/hello_world) for a complete working implementation.
 
 ## API
 
-### The ScalableService Class
+### The ScalableService class
 
 #### scalability.createService(stream)
 
@@ -148,7 +152,7 @@ _public_ **service.createServiceAPI\<T\>(options)**
 
 Returns: `<Async<T>>` A `Proxy` of type `<T>` that consists of asynchronous analogues of methods in `<T>`.
 
-### The WorkerPool Class
+### The WorkerPool class
 
 #### scalability.createWorkerPool(options)
 
@@ -163,7 +167,7 @@ Returns: `<WorkerPool>`
 
 A `WorkerPool` wraps the `MessagePorts` of the Worker threads into a single `stream.Duplex`. Hence, a `WorkerPool` _is a_ `stream.Duplex`, so it can be passed to the _Network-Services_ `createService` helper function. This is the stream adapter that is used in the module of the main thread.
 
-### The PortStream Class
+### The PortStream class
 
 #### scalability.createPortStream(options)
 
@@ -173,6 +177,6 @@ A `PortStream` wraps the `parentPort` of the Worker thread into a `stream.Duplex
 
 ## Support
 
-If you have a feature request or run into any issues, feel free to submit an [issue](https://github.com/faranalytics/scalability/issues) or start a [discussion](https://github.com/faranalytics/scalability/discussions). You’re also welcome to reach out directly to one of the authors at any time.
+If you have a feature request or run into any issues, feel free to submit an [issue](https://github.com/faranalytics/scalability/issues) or start a [discussion](https://github.com/faranalytics/scalability/discussions). You’re also welcome to reach out directly to one of the authors.
 
 - [Adam Patterson](https://github.com/adamjpatterson)
